@@ -1,0 +1,22 @@
+[
+    {
+        "course_code": "1",
+        "course_name": "",
+        "period": null,
+        "teacher_name": "",
+        "student_list": [
+            {
+                "first_name": "a",
+                "lastname": "",
+                "gender": "",
+                "image": "",
+                "student_nnumber": null,
+                "grade": null,
+                "email": "",
+                "marks": [],
+                "comments": ""
+            }
+        ],
+        "assignments_list": []
+    }
+]
