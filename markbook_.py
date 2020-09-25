@@ -32,7 +32,7 @@ class Markbook(object):
         '''
         try:
             f = open('markbook.json', 'r')
-            self.classroom_list = json.loads(f)
+            self.classroom_list = json.loads(f.read())
             f.close()
         except:
             print('Storage file missing')
@@ -58,7 +58,7 @@ class Markbook(object):
         '''To create a classroom dictionary(default empty):
         Args:
             course_code='': course code
-            course_namer='': course name
+            course_name='': course name
             period=None: period
             teacher_name='': teacher's name
             student_listt=[]: A list of students
@@ -308,7 +308,7 @@ class Markbook(object):
         '''
         for a in student[MARKS]:
             if a[ASSIGNMENT_NAME] == assignment[ASSIGNMENT_NAME]:
-                del a
+                student[MARKS].remove(a)
     
     def add_student_comments(self, student: dict=None, comment: str='') -> str:
         '''add a report card comment
@@ -323,3 +323,4 @@ class Markbook(object):
         '''
         if student in classroom[STUDENT_LIST]:
             classroom[STUDENT_LIST].remove(student)
+
