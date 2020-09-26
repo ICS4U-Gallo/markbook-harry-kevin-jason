@@ -26,3 +26,7 @@ CLASSROOM_ATTRIBUTES = {
             PERIOD: 0,
             TEACHER_NAME: ''
         }
+
+print(CLASSROOM_ATTRIBUTES.items())
+for i in CLASSROOM_ATTRIBUTES.items():
+    print(i)

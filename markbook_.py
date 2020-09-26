@@ -112,12 +112,12 @@ class Markbook(object):
 
 
     #Methods to edit a classroom
-    def update_classroom(self, classroom: dict, *kwargs) -> dict:
+    def update_classroom(self, classroom: dict, **kwargs: dict) -> dict:
         '''update everything in the classroom with given key word args
             Return -> dict:
             the dict updated
         '''
-        classroom.update(*kwargs)
+        classroom.update(**kwargs)
         return classroom
 
     def del_classroom(self, classroom: dict):
