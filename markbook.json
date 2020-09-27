@@ -17,6 +17,30 @@
                     {
                         "assignment_name": "Markbook",
                         "marks": 100
+                    },
+                    {
+                        "assignment_name": "Test 1",
+                        "marks": 94
+                    }
+                ],
+                "comments": ""
+            },
+            {
+                "first_name": "Yingchen",
+                "last_name": "Ma",
+                "gender": "Female",
+                "image": "",
+                "student_number": "1140524",
+                "grade": "13",
+                "email": "",
+                "marks": [
+                    {
+                        "assignment_name": "Markbook",
+                        "marks": 85
+                    },
+                    {
+                        "assignment_name": "Test 1",
+                        "marks": 88
                     }
                 ],
                 "comments": ""
@@ -27,6 +51,11 @@
                 "assignment_name": "Markbook",
                 "due": "Sept 28",
                 "points": 100
+            },
+            {
+                "assignment_name": "Test 1",
+                "due": "Sept 31",
+                "points": 100  
             }
         ]
     }

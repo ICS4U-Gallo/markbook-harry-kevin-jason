@@ -319,7 +319,7 @@ class Client(object):
                     input_ =  self.get_input("please enter the {}(type: {},     defualt={})".format(key, type(value), value))
                     print(f'{key}: {input_}')
                     if input_ == 'c':
-                        return self.event_enter_a_classroom(classroom, str1='Cancelled addition')
+                        return self.event_enter_a_classroom(classroom, string='Cancelled addition')
                     elif input_:
                         list[index] = input_
                         break
@@ -396,13 +396,13 @@ class Client(object):
         if self.get_assurance(' to print this report'):
             path = f'report cards/{dict_[FIRST_NAME]}.txt'
             with open(path, 'w+') as f:
-                f.write(line_0)
-                f.write(line_1)
-                f.write(line_2)
+                f.write(f'{line_0}\n')
+                f.write(f'{line_1}\n')
+                f.write(f'{line_2}\n')
                 for m in mark_list:
-                    f.write(m)
-                f.write(line_3)
-                f.write(line_4)
+                    f.write(f'{m}\n')
+                f.write(f'{line_3}\n')
+                f.write(f'{line_4}\n')
             return self.event_view_student_assignments(student, string=f'Successfully printed the report card to {path}')
         else:
             return self.event_view_student_assignments(student, string=f'print cancelled')            
