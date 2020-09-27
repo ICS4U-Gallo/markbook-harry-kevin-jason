@@ -1,2 +1,2 @@
-i = input('enter')
-print(bool(i))
+s = 'r3'
+print(s[1])

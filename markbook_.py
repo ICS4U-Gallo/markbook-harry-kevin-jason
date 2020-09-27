@@ -265,16 +265,18 @@ class Markbook(object):
             A list that contents lists of assignment detials that content assignment name, marks, class average and median
             example: [['first test', 100, 100, 100], ['second test', 100, 100, 100]]
         '''
+        list_ = []
         temp_list = []
         for assignment in student[MARKS]:
             for assignment_ in classroom[ASSIGNMENTS_LIST]:
                 if assignment[ASSIGNMENT_NAME] == assignment[ASSIGNMENT_NAME]:
                     stat = self.get_assignment_average_median(classroom, assignment_)
-                    temp_list = assignment.values()
+                    temp_list = list(assignment.values())
                     temp_list.append(stat[0])
                     temp_list.append(stat[1])
-                 
-        return temp_list
+                
+                    list_.append(temp_list)
+        return list_
         
     def get_student_average(self, classroom, student) -> float:
         '''get the student average mark

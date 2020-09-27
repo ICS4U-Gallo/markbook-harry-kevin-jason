@@ -11,11 +11,12 @@ class Option(object):
     '''option object, saves option attributes
     '''
 
-    def __init__(self, name=None, index=-1, event=None, content=None):
+    def __init__(self, name=None, index=-1, event=None, content=None, classroom=None):
         self.name = name
         self.index = index
         self.event = event
         self.content = content
+        self.classroom = classroom
     
     def __str__(self):
         return str(self.index)
@@ -140,6 +141,9 @@ class Client(object):
                     print(f'{key}: {input_}')
                     if input_ == 'c':
                         return self.view_all_classroom(str1='Cancelled addition')
+                    elif input_ == 'Gallo':
+                        list[index] = 'バカ' 
+                        break                     
                     elif input_:
                         list[index] = input_
                         break
@@ -180,7 +184,7 @@ class Client(object):
                     input_ =  self.get_input("please enter the {}(type: {}, defualt={})".format(key, type(value), list[index]))
                     print(f'{key}: {input_}')
                     if input_ == 'c':
-                        return self.view_all_classroom(str1='Cancelled addition')
+                        return self.event_enter_a_classroom(classroom, string='Cancelled addition')
                     elif input_:
                         list[index] = input_
                         break
@@ -197,9 +201,12 @@ class Client(object):
 
     def event_remove_a_classroom(self, classroom: object):
         dict_ = classroom.content
+        self.header_2(f'Remove {dict_[COURSE_NAME]}')
         if self.get_assurance(f' to {classroom.name}'):
             self.markbook.del_classroom(dict_)
-            return self.view_all_classroom(f'Successful removed {classroom.name}')
+            return self.view_all_classroom(f'Successful removed {dict_[COURSE_NAME]}')
+        else:
+            return self.event_enter_a_classroom(classroom, f'Removement Cancelled')
 
     def event_enter_a_classroom(self, classroom: object, string=''):
         '''A menu shows all classroom detials and options
@@ -212,14 +219,14 @@ class Client(object):
 
         #add options
         self.classroom_options.append(Option('back to last menu', index, self.view_all_classroom))
-        self.classroom_options.append(Option('view all students', index+1, self.view_all_assignments, classroom.content))
-        self.classroom_options.append(Option('view all assignments', index+2, self.view_all_students, classroom.content))
+        self.classroom_options.append(Option('view all students', index+1, self.view_all_students, classroom.content))
+        self.classroom_options.append(Option('view all assignments', index+2, self.view_all_assignments, classroom.content))
         self.classroom_options.append(Option('edit this classroom', index+3, self.event_edit_a_classroom, classroom.content))              
         self.classroom_options.append(Option('remove this classroom', index+4, self.event_remove_a_classroom, classroom.content))         
         self.classroom_options.append(Option('exit', index+5, self.event_exit))     
         #view   
-        self.header_1(f'Menu: Classroom {classroom.name}', string)
-        self.header_2('detials')
+        self.header_1(f'Menu: Classroom {classroom.content[COURSE_NAME]}', string)
+        self.header_2('Detials')
         for value in list:
             if value[0] != STUDENT_LIST and value[0] != ASSIGNMENTS_LIST:
                 print(f'{value[0]}: {value[1]}')
@@ -246,8 +253,265 @@ class Client(object):
     #Events of student
     def view_all_students(self, classroom: object, string=''):
         dict_ = classroom.content
+        list = self.markbook.get_all_student(dict_)
+        self.all_student_options = []
+        index = 0
+
+        for student in list:#add all classrooms
+            name = f'{student[FIRST_NAME]} {student[LAST_NAME]}'
+            event = self.event_view_a_student
+            option = Option(name, index, event, student, classroom)
+
+            self.all_student_options.append(option)
+            index += 1        
+        self.all_student_options.append(Option('back to last menu', index, self.event_enter_a_classroom, classroom.content))
+        self.all_student_options.append(Option('add a student', index+1, self.event_add_a_student, classroom.content))
+        self.all_student_options.append(Option('exit', index+2, self.event_exit))
+
+        #view
+        self.header_1(f'Menu: Students in {classroom.content[COURSE_NAME]}', string)
+        self.header_2('Students')
+        for student in self.all_student_options:
+            if int(str(student)) < index:
+                print(f'{student.index}. {student.name}, ', end='')
+        print()
+        self.header_2('Options')
+        print(f'type [0-{index-1}] the index before student name to view student profile')
+        print(f'type {index} to go back to last menu')
+        print(f'type {index+1} to add a student')
+        print(f'type {index+2} to exit')
+
+        #contronller
+        while True:
+            option = self.get_input(f"Please enter the option index[0-{index+2}]: ")
+            for opt in self.all_student_options:
+                if str(opt) == str(option):
+                    return opt.trigger()
+            else:
+                print("invalid input, please try again")
+
+    def event_add_a_student(self, classroom: object, string=''):
+        self.header_1('Menu: Add Student', string)
+        self.header_2('Student has following attributes')
+        for attr in STUDENT_ATTRIBUTES.keys():
+          print(attr)
+
+        def create_student(list):
+            if self.get_assurance():
+                self.markbook.add_student(classroom.content, list[0], list[1], list[2], list[3], list[4], list[5], list[6])
+                self.view_all_students(classroom, string='Successfully added a classroom')
+            else:
+                enter_attributes()
+
+        def enter_attributes():
+            self.header_2("Please Enter Student Attributes")
+            print("{:-^60}".format("type 'enter' to skip this attributes"))
+            print("{:-^60}".format("type 'c' to cancel this addition"))
+            list = ['','','','',-1,-1,''] 
+
+
+            for index, (key, value) in enumerate(STUDENT_ATTRIBUTES.items()):
+                while True:
+                    self.skip_line()
+                    input_ =  self.get_input("please enter the {}(type: {},     defualt={})".format(key, type(value), value))
+                    print(f'{key}: {input_}')
+                    if input_ == 'c':
+                        return self.event_enter_a_classroom(classroom, str1='Cancelled addition')
+                    elif input_:
+                        list[index] = input_
+                        break
+                    elif not input_:
+                        break     
+
+            self.header_2("Review New student")
+            for index, key in enumerate(STUDENT_ATTRIBUTES.keys()):
+                    print(f'{key}: {list[index]}')
+            
+            create_student(list)
+        enter_attributes()
+
+    def event_view_a_student(self, student: object, string=''):
+        dict_ = student.content
         list = dict_.items()
+        self.student_options = []       
+        index = 0 
+        #add options
+        self.student_options.append(Option('back to last menu', index, self.view_all_students, student.classroom.content))
+        self.student_options.append(Option('print student report', index+1))
+        self.student_options.append(Option('add conmments', index+2, self.event_add_comment, student.content, student.classroom))
+        self.student_options.append(Option('view student assignments', index+3, self.event_view_student_assignments, student.content, student.classroom))
+        self.student_options.append(Option('edit student profile', index+4, self.event_edit_student_profile, student.content))
+        self.student_options.append(Option('remove this student', index+5, self.event_remove_a_student, student.content, student.classroom))
+        self.student_options.append(Option('exit', index+6, self.event_exit))   
+
+        #view
+        self.header_1(f'Menu: Student {student.content[FIRST_NAME]}', string)
+        self.header_2('Profile')    
+        for value in list:
+            if value[0] != MARKS:
+                print(f'{value[0]}: {value[1]}')
+        print('student has following assignment:', end='')
+        for ass in dict_[MARKS]:
+            print(f'{ass[ASSIGNMENT_NAME]}: {ass[MARKS]}, ', end='')
+        print()
+        self.header_2('Options')
+        for option in self.student_options:
+            print(f'type {option.index} to {option.name}')
+
+        #user
+        while True:
+            option = self.get_input(f"Please enter the option index[0-{index+5}]: ")
+            for opt in self.student_options: 
+                if str(opt) == str(option):    
+                    return opt.trigger()
+            else:
+                print("invalid input, please try again")
+
+    def event_edit_student_profile(self, student: object, string=''):
+        dict_ = student.content
+        self. header_1(f'Menu: Edit Student {student.name}')
+        self.header_2('Student has following attributes')
+        for attr in STUDENT_ATTRIBUTES.keys():
+          print(attr) 
         
+        def update_student(list):
+            if self.get_assurance():
+                self.markbook.edit_student(student.content, first_name=list[0], last_name=list[1], gender=list[2], image=list[3], student_number=list[4], grade=list[5], marks=list[6])
+                self.event_view_a_student(student, string='Successfully updated student profile')
+            else:
+                enter_attributes()
+
+        def enter_attributes():
+            self.header_2("Please Enter Student Attributes")
+            print("{:-^60}".format("type 'enter' to skip this attributes"))
+            print("{:-^60}".format("type 'c' to cancel this addition"))
+            list = [dict_[FIRST_NAME], dict_[LAST_NAME], dict_[GENDER], dict_[IMAGE], dict_[STUDENT_NUMBER], dict_[GRADE], dict_[EMAIL]]
+
+            for index, (key, value) in enumerate(STUDENT_ATTRIBUTES.items()):
+                while True:
+                    self.skip_line()
+                    input_ =  self.get_input("please enter the {}(type: {}, defualt={})".format(key, type(value), list[index]))
+                    print(f'{key}: {input_}')
+                    if input_ == 'c':
+                        return self.event_view_a_student(student, string='Cancelled addition')
+                    elif input_:
+                        list[index] = input_
+                        break
+                    elif not input_:
+                        break
+
+            self.header_2("Review New student")
+            for index, key in enumerate(STUDENT_ATTRIBUTES.keys()):
+                    print(f'{key}: {list[index]}')
+            
+            update_student(list)
+        
+        enter_attributes() 
+
+    def event_add_comment(self, student: object, string=''):
+        dict_ = student.content
+        self.header_2(f'Add Comments to {dict_[FIRST_NAME]}')
+        comments = self.get_input('Please add the comments:')
+        print(f'The new comment is {comments}')
+        if self.get_assurance():
+            self.markbook.add_student_comments(dict_, comments)
+            self.event_view_a_student(student, 'Successfully added the comment')
+        else:
+            self.event_view_a_student(student, 'Addtion Cancelled')
+
+    def event_remove_a_student(self, student: object):
+        dict_ = student.content
+
+        self.header_2(f'Remove {dict_[FIRST_NAME]}')
+        if self.get_assurance(f' to {student.name}'):
+            self.markbook.del_student(student.classroom.content, dict_)
+            return self.view_all_students(student.classroom, f'Successful removed {dict_[FIRST_NAME]}')
+        else:
+            return self.event_view_a_student(student, f'Removement Cancelled')
+
+    def event_view_student_assignments(self, student: object, string=''):
+        dict_ = student.content
+        list = self.markbook.get_student_marks(student.classroom.content, student.content)
+        self.student_all_assignments_options = []
+        #model
+        index_ = len(list) - 1
+        for index, value in enumerate(list):
+            self.student_all_assignments_options.append(Option(value[0], index_, self.event_edit_student_assignment, student.content, student.classroom))
+            self.student_all_assignments_options.append(Option(value[0], f'r{index_}', self.event_edit_student_assignment, student.content, student.classroom))        
+        self.student_all_assignments_options.append(Option('back to last menu', index+1, self.event_view_a_student, student.content, student.classroom))
+        self.student_all_assignments_options.append(Option('add an assignment', index+2, None, student.content))
+        self.student_all_assignments_options.append(Option('exit', index+3, self.event_exit))
+
+        #view
+        self.header_2(f'Assignments of {dict_[FIRST_NAME]}')
+        print('{:<20}{:<10}{:<15}{:<10}'.format('Assignment Name', 'Marks', 'Class Average', 'Class Median'))
+        for index, value in enumerate(list):
+            name, marks, ave, med = value[0], value[1], value[2], value[3]
+            print('{:<20}{:<10}{:<15}{:<10}'.format(f'{index}.{name}',f'{marks}', f'{ave}', f'{med}'))   
+
+        self.header_2('Options')
+        print(f'type [0-{index-1}] the index before assignment name to edit assignment')
+        print(f'type r[0-{index-1}] the index before assignment name to remove assignment example: r3')        
+        print(f'type {index+1} to go back to last menu')
+        print(f'type {index+2} to add a assignment')
+        print(f'type {index+3} to exit')
+
+        #contronller
+        while True:
+            option = self.get_input(f"Please enter the option index[0-{index+3}]: ")
+            for opt in self.student_all_assignments_options:
+                if str(opt) == str(option):
+                    return opt.trigger()
+            else:
+                print("invalid input, please try again")
+
+    def event_edit_student_assignment(self, assignment: object, string=''):
+        dict_ = assignment.content[MARKS][assignment.index]
+        self.header_2(f'Edit Assignment {dict_[ASSIGNMENT_NAME]}')
+
+        def update_assignment(list):
+            if self.get_assurance():
+                self.markbook.update_assignment(assignment.content[MARKS][assignment.index], assignment_name=list[0], marks=list[1])
+                self.event_view_student_assignments(assignment, string='Successfully updated assignment')
+            else:
+                enter_attributes()
+
+        def enter_attributes():
+            print("{:-^60}".format("type 'enter' to skip this attributes"))
+            print("{:-^60}".format("type 'c' to cancel this addition"))
+            list = [dict_[ASSIGNMENT_NAME], dict_[MARKS]]
+
+            for index, (key, value) in enumerate(ASSIGNMENTS_ATTRIBUTES.items()):
+                while True:
+                    self.skip_line()
+                    input_ =  self.get_input("please enter the {}(type: {}, defualt={})".format(key, type(value), list[index]))
+                    print(f'{key}: {input_}')
+                    if input_ == 'c':
+                        return self.event_view_student_assignments(assignment, string='Cancelled addition')
+                    elif input_:
+                        list[index] = input_
+                        break
+                    elif not input_:
+                        break
+
+            self.header_2("Review New Assignment")
+            for index, key in enumerate(ASSIGNMENTS_ATTRIBUTES.keys()):
+                    print(f'{key}: {list[index]}')
+            
+            update_assignment(list)
+        
+        enter_attributes() 
+
+    def event_remove_student_assignment(self, assignment: object, string=''):
+        index_ = assignment.index[1]
+        dict_ = assignment.content[MARKS][index_] 
+
+        self.header_2(f'Remove {dict_[ASSIGNMENT_NAME]}')
+        if self.get_assurance(f' to remove {dict_[ASSIGNMENT_NAME]}'):
+            
+
+
+    #Events of assignment    
     def view_all_assignments(self, classroom: object, string=''):
         dict_ = classroom.content
         
