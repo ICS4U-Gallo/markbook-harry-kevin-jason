@@ -199,6 +199,20 @@ class Markbook(object):
             
         return [statistics.mean(temp_mark_list), statistics.median(temp_mark_list)]
   
+    def get_all_assignment_average_median(self, classroom: dict) -> list:
+        '''get final mark average and median of class
+        Returns -> list:
+            A list contents class average and class median
+            example: [90, 85]
+        '''
+        templist = [[],[]]
+        for ass in classroom[ASSIGNMENTS_LIST]:
+            list_ = self.get_assignment_average_median(classroom, ass)
+            templist[0].append(list_[0])
+            templist[1].append(list_[1])        
+        return [statistics.mean(templist[0]), statistics.median(templist[1])]
+
+
     #Methods to edit an assignment
     def update_assignment(self, assignment: dict, **kwargs) -> dict:
         '''update everything in the classroom with given key word args
@@ -278,7 +292,7 @@ class Markbook(object):
                     list_.append(temp_list)
         return list_
         
-    def get_student_average(self, classroom, student) -> float:
+    def get_student_average(self, classroom: dict, student: dict) -> float:
         '''get the student average mark
         Returns -> float:
             student's average mark of all assignment
