@@ -255,6 +255,7 @@ class Client(object):
     def view_all_students(self, classroom: object, string=''):
         dict_ = classroom.content
         list = self.markbook.get_all_student(dict_)
+        list = self.markbook.buble_sort(list)
         self.all_student_options = []
         index = 0
 
@@ -390,6 +391,7 @@ class Client(object):
         print(line_0)
         print(line_1)
         print(line_2)
+        print('{:<20}{:<10}{:<15}{:<10}'.format('Assignment Name', 'Marks', 'Class Average', 'Class Median'))
         for m in mark_list:
             print(m)
         print(line_3)
@@ -400,6 +402,7 @@ class Client(object):
                 f.write(f'{line_0}\n')
                 f.write(f'{line_1}\n')
                 f.write(f'{line_2}\n')
+                f.write('{:<20}{:<10}{:<15}{:<10}\n'.format('Assignment Name', 'Marks', 'Class Average', 'Class Median'))
                 for m in mark_list:
                     f.write(f'{m}\n')
                 f.write(f'{line_3}\n')
@@ -572,7 +575,7 @@ class Client(object):
             for index, (key, value) in enumerate(ASSIGNMENTS_ATTRIBUTES.items()):
                 while True:
                     self.skip_line()
-                    input_ =  self.get_input("please enter the {}".format(key, type(value), list[index]))
+                    input_ =  self.get_input("please enter the {}(default={})".format(key, list[index]))
                     print(f'{key}: {input_}')
                     if input_ == 'c':
                         return self.event_view_student_assignments(assignment, string='Cancelled addition')
@@ -594,6 +597,7 @@ class Client(object):
     def view_all_assignments(self, classroom: object, string=''):
         dict_ = classroom.content
         list = self.markbook.get_all_assignments(dict_)
+        list = self.markbook.buble_sort(list)
         self.all_assignments_options = []
         index = 0
 
@@ -610,7 +614,7 @@ class Client(object):
             index += 1      
 
         self.all_assignments_options.append(Option('back to last menu', index, self.view_all_classroom, classroom.content))
-        self.all_assignments_options.append(Option('add an assignment', index+1, self.event_add_a_assignment, classroom.content))
+        self.all_assignments_options.append(Option('add an assignment', index+1, self.event_add_a_assignment, classroom.content, classroom))
         self.all_assignments_options.append(Option('exit', index+2, self.event_exit))
 
         #view
@@ -637,7 +641,6 @@ class Client(object):
             else:
                 print("invalid input, please try again")
         
-
     def event_print_assignment_report(self, assignment: object):
         cla_dict = assignment.classroom.content
         ass_dict = assignment.content
@@ -646,6 +649,7 @@ class Client(object):
         line_2 = '{:-^50}'.format('Marks')
         line_3 = '{:<20}{:<10}'.format('Name', 'Marks')
         list = self.markbook.get_assignment_student_marks(cla_dict, ass_dict)
+        list = self.markbook.buble_sort(list)
         mark_list = []
         for index, value in enumerate(list):
             name, marks = value[0], value[1]
@@ -676,14 +680,90 @@ class Client(object):
         else:
             return self.view_all_assignments(assignment.classroom, string=f'print cancelled') 
 
-    def event_edit_assignment(self):
-        pass
+    def event_edit_assignment(self, assignment:object, string=''):
+        cla_dict = assignment.classroom.content
+        ass_dict = assignment.content
+        self.header_2(f'Edit Assignment {ass_dict[ASSIGNMENT_NAME]}')
 
-    def event_remove_assignment(self):
-        pass
-    
-    def event_add_a_assignment(self):
-        pass
+        def update_assignment(list):
+            if self.get_assurance():
+                self.markbook.update_assignment(assignment.content, assignment_name=list[0], due=list[1], points=list[2])
+                self.view_all_assignments(assignment.classroom, string='Successfully updated assignment')
+            else:
+                enter_attributes()
+
+        def enter_attributes():
+            print("{:-^60}".format("type 'enter' to skip this attributes"))
+            print("{:-^60}".format("type 'c' to cancel this addition"))
+            list = [ass_dict[ASSIGNMENT_NAME], ass_dict[DUE], ass_dict[POINTS]]
+
+            for index, (key, value) in enumerate(ASSIGNMENTS_ATTRIBUTES_.items()):
+                while True:
+                    self.skip_line()
+                    input_ =  self.get_input("please enter the {}(defualt={})".format(key, list[index]))
+                    print(f'{key}: {input_}')
+                    if input_ == 'c':
+                        return self.view_all_assignments(assignment.classroom, string='Cancelled addition')
+                    elif input_:
+                        list[index] = input_
+                        break
+                    elif not input_:
+                        break
+
+            self.header_2("Review New Assignment")
+            for index, key in enumerate(ASSIGNMENTS_ATTRIBUTES_.keys()):
+                    print(f'{key}: {list[index]}')
+            
+            update_assignment(list)
+        
+        enter_attributes() 
+
+    def event_remove_assignment(self, assignment, stirng=''):
+        cla_dict = assignment.classroom.content
+        ass_dict = assignment.content
+        self.header_2(f'Remove {ass_dict[ASSIGNMENT_NAME]}')
+        if self.get_assurance(f' to remove {ass_dict[ASSIGNMENT_NAME]}'):
+            self.markbook.del_assignment(cla_dict, ass_dict)
+            return self.view_all_assignments(assignment.classroom, f'Successful removed {dict_[ASSIGNMENT_NAME]}')
+        else:
+            return self.view_all_assignments(assignment.classroom, f'Removement Cancelled')    
+
+    def event_add_a_assignment(self, assignment: object):
+        cla_dict = assignment.classroom.content
+        self.header_2('Add Assignment')
+
+        def create_assignment(list):
+            if self.get_assurance():
+                self.markbook.add_assignment(cla_dict, name=list[0], due=list[1], points=list[2])
+                self.view_all_assignments(assignment.classroom, string='Successfully added assignment')
+            else:
+                enter_attributes()
+
+        def enter_attributes():
+            print("{:-^60}".format("type 'enter' to skip this attributes"))
+            print("{:-^60}".format("type 'c' to cancel this addition"))
+            list = ['', '', -1]
+
+            for index, (key, value) in enumerate(ASSIGNMENTS_ATTRIBUTES_.items()):
+                while True:
+                    self.skip_line()
+                    input_ =  self.get_input("please enter the {}(default={})".format(key, list[index]))
+                    print(f'{key}: {input_}')
+                    if input_ == 'c':
+                        return self.view_all_assignments(assignment.classroom, string='Cancelled addition')
+                    elif input_:
+                        list[index] = input_
+                        break
+                    elif not input_:
+                        break
+
+            self.header_2("Review New Assignment")
+            for index, key in enumerate(ASSIGNMENTS_ATTRIBUTES_.keys()):
+                    print(f'{key}: {list[index]}')
+            
+            create_assignment(list)
+        
+        enter_attributes() 
 
 if __name__ == "__main__":
     path = os.path.abspath(os.path.dirname(__file__))

@@ -1,2 +1,3 @@
-s = 'r3'
-print(s[1])
+if 'a' < 'b':
+    print('a')
+    

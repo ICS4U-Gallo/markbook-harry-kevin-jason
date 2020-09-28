@@ -41,7 +41,7 @@ class Markbook(object):
         '''Write the informations of classroom_list into json file
         '''
         f = open('markbook.json', 'w')
-        f.write(json.dumps(self.classroom_list))
+        f.write(json.dumps(self.classroom_list, indent=4, sort_keys=True))
         f.close()
         
     def empty_file(self):
@@ -49,7 +49,23 @@ class Markbook(object):
         '''
         f = open('markbook.json', 'w+')
         f.close()
-
+    
+    def buble_sort(self, nums: list):
+        '''Sort by mark or last name
+        '''
+        for i in range(len(nums) - 1):
+            for j in range(len(nums) - i - 1):
+                try:
+                    if nums[j][1] < nums[j + 1][1]:
+                        nums[j], nums[j + 1] = nums[j + 1], nums[j]
+                except:
+                    try:
+                        if nums[j][LAST_NAME] < nums[j + 1][LAST_NAME]:
+                            nums[j], nums[j + 1] = nums[j + 1], nums[j]
+                    except:
+                        if nums[j][ASSIGNMENT_NAME] < nums[j + 1][ASSIGNMENT_NAME]:
+                            nums[j], nums[j + 1] = nums[j + 1], nums[j]
+        return nums
 
     #classroom methods, create classroom, get informations from classroom, edit classroom, delete classroom
     def add_classroom(self, course_code: str='', course_name: str='',
@@ -223,7 +239,7 @@ class Markbook(object):
         assignment.update(**kwargs)
         return assignment
         
-    def del_assignment(self, classroom, assignment):
+    def del_assignment(self, classroom:dict, assignment:dict):
         '''Remove an assignment from a classroom
         '''
         if assignment in self.get_all_assignment(classroom):
