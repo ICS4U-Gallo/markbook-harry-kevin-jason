@@ -41,7 +41,7 @@ class Markbook(object):
         '''Write the informations of classroom_list into json file
         '''
         f = open('markbook.json', 'w')
-        f.write(json.dumps(self.classroom_list, indent=4, sort_keys=True))
+        f.write(json.dumps(self.classroom_list, indent=4))
         f.close()
         
     def empty_file(self):
