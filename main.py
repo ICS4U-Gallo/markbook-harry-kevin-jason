@@ -45,9 +45,9 @@ class Client(object):
     def get_assurance(self, str='') -> bool:
         while True:
             i = input(f'Are you sure{str}?(y/n):')
-            if i == 'y' or i == '':
+            if i == 'y' or i == '' or i == 'Y':
                 return True
-            elif i == 'n':
+            elif i == 'n' or i == 'N':
                 return False
             else:
                 print("invalid input, please enter 'y' or 'n'")
