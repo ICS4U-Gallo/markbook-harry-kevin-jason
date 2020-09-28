@@ -1,7 +1,7 @@
 
-'''Run this file to open markbook
+'''
 python -m main
-  '''
+ '''
 
 from fastcode import *
 import os
@@ -35,8 +35,8 @@ class Client(object):
         self.markbook = markbook_.Markbook()
 
     def set_up(self):
-        self.markbook.set_up()
-        self.view_all_classroom(None)
+        self.markbook.set_up()#set up Markbook
+        self.view_all_classroom(None)#Enter first menu
     
     def get_input(self, str: str) -> str:
         i = input(str)
@@ -71,7 +71,8 @@ class Client(object):
     
     #Events of all classroom
     def view_all_classroom(self, obj: object, str1=''):
-        '''a menu shows all classrooms and options
+        '''Key menu shows all classrooms and options
+        -> enter a classroom, add, exit
         '''
 
         #model part
@@ -94,11 +95,11 @@ class Client(object):
         #view part: print everything
         self.header_1('Menu: All Classrooms', str1)
         self.header_2('classrooms')
-        for classes in self.all_classroom_options:
+        for classes in self.all_classroom_options:#print classrooms
             if int(str(classes)) < index:
               print (f"period{classes.content[PERIOD]}: {classes.content[COURSE_CODE]} {classes.content[COURSE_NAME]} by {classes.content[TEACHER_NAME]}")
         self.header_2('Options')
-        for classes in self.all_classroom_options:
+        for classes in self.all_classroom_options:#print options
             if int(str(classes)) < index:
                 print (f'type {classes.index} to enter class "{classes.name}"')
             else:
@@ -107,27 +108,28 @@ class Client(object):
 
         #User and controller part
         while True:
-            option = self.get_input(f"Please enter the option index[0-{index+1}]: ")
+            option = self.get_input(f"Please enter the option index[0-{index+1}]: ")#get input
             for opt in self.all_classroom_options: 
-                if str(opt) == str(option):    
+                if str(opt) == str(option):#search input in options
                     return opt.trigger()
             else:
                 print("invalid input, please try again")
 
     def event_add_a_classroom(self, obj: object, str1=''):
+        #sub menu of view all classrooms
         self.header_1('Menu: Add Classroom')
         self.header_2('Classroom has following attributes')
         for attr in CLASSROOM_ATTRIBUTES.keys():
           print(attr)
   
-        def create_classroom(list):
+        def create_classroom(list):#create the classroom
             if self.get_assurance():
                 self.markbook.add_classroom(list[0], list[1], list[2], list[3])
                 self.view_all_classroom(None, str1='Successfully added a classroom')
             else:
                 enter_attributes()
 
-        def enter_attributes():
+        def enter_attributes():#get input
             self.header_2("Please Enter Classroom Attributes")
             print("{:-^60}".format("type 'enter' to skip this attributes"))
             print("{:-^60}".format("type 'c' to cancel this addition"))
@@ -139,8 +141,8 @@ class Client(object):
                     print(f'{key}: {input_}')
                     if input_ == 'c':
                         return self.view_all_classroom(None, str1='Cancelled addition')
-                    elif input_ == 'Gallo':
-                        list[index] = u'バカ' 
+                    elif input_ == A:
+                        list[index] =  B
                         break                     
                     elif input_:
                         list[index] = input_
@@ -158,20 +160,21 @@ class Client(object):
 
     #Events of classroom
     def event_edit_a_classroom(self, classroom: object, stirng=''):
-        dict_ = classroom.content
+        #sub menu of view all classrooms
+        dict_ = classroom.content#get content
         self.header_1(f'Menu: Edit Classroom {classroom.name}')
         self.header_2('Classroom has following attributes')
         for attr in CLASSROOM_ATTRIBUTES.keys():
           print(attr)
         
-        def update_classroom(list):
+        def update_classroom(list):#update
             if self.get_assurance():
                 self.markbook.update_classroom(classroom.content, course_code=list[0], course_name=list[1], period=list[2], teacher_name=list[3])
                 self.event_enter_a_classroom(classroom, string='Successfully updated a classroom')
             else:
                 enter_attributes()
 
-        def enter_attributes():
+        def enter_attributes():#get input
             self.header_2("Please Enter Classroom Attributes")
             print("{:-^60}".format("type 'enter' to skip this attributes"))
             print("{:-^60}".format("type 'c' to cancel this addition"))
@@ -201,6 +204,7 @@ class Client(object):
         enter_attributes()
 
     def event_remove_a_classroom(self, classroom: object):
+        #sub menu of enter a calssroom
         dict_ = classroom.content
         self.header_2(f'Remove {dict_[COURSE_NAME]}')
         if self.get_assurance(f' to {classroom.name}'):
@@ -210,7 +214,7 @@ class Client(object):
             return self.event_enter_a_classroom(classroom, f'Removement Cancelled')
 
     def event_enter_a_classroom(self, classroom: object, string=''):
-        '''A menu shows all classroom detials and options
+        '''Key menu shows all classroom detials and options
              -> all_classrooms, view all students, view all assignments, remove
         '''
         dict_ = classroom.content
@@ -253,6 +257,9 @@ class Client(object):
         
     #Events of student
     def view_all_students(self, classroom: object, string=''):
+        '''Key menu view all students
+          -> add, see profile, exit
+        '''
         dict_ = classroom.content
         list = self.markbook.get_all_student(dict_)
         list = self.markbook.buble_sort(list)
@@ -296,6 +303,7 @@ class Client(object):
 
 
     def event_add_a_student(self, classroom: object, string=''):
+        #sub menu of view all student
         self.header_1('Menu: Add Student', string)
         self.header_2('Student has following attributes')
         for attr in STUDENT_ATTRIBUTES.keys():
@@ -336,6 +344,9 @@ class Client(object):
         enter_attributes()
 
     def event_view_a_student(self, student: object, string=''):
+        '''Key menu view a student:
+          -> print report, enter classroom(back), add comment, view ass, edit profile, remove, exit
+        '''
         dict_ = student.content
         list = dict_.items()
         self.student_options = []       
@@ -373,6 +384,7 @@ class Client(object):
                 print("Invalid input, please try again")
 
     def event_print_student_report(self, student: object, string=''):
+        #sub menu of view a student
         dict_ = student.content
         dict__ = student.classroom.content
         list = self.markbook.get_student_marks(dict__, dict_)
@@ -412,6 +424,7 @@ class Client(object):
             return self.event_view_student_assignments(student, string=f'print cancelled')            
 
     def event_edit_student_profile(self, student: object, string=''):
+        #sub menu of view a student
         dict_ = student.content
         self.header_1(f'Menu: Edit Student {student.name}')
         self.header_2('Student has following attributes')
@@ -453,6 +466,7 @@ class Client(object):
         enter_attributes() 
 
     def event_add_comment(self, student: object, string=''):
+        #sub menu of view a student      
         dict_ = student.content
         self.header_2(f'Add Comments to {dict_[FIRST_NAME]}')
         comments = self.get_input('Please add the comments:')
@@ -464,6 +478,7 @@ class Client(object):
             self.event_view_a_student(student, 'Addtion Cancelled')
 
     def event_remove_a_student(self, student: object):
+        #sub menu of view a student
         dict_ = student.content
 
         self.header_2(f'Remove {dict_[FIRST_NAME]}')
@@ -474,6 +489,9 @@ class Client(object):
             return self.event_view_a_student(student, f'Removement Cancelled')
 
     def event_view_student_assignments(self, student: object, string=''):
+        '''Key menu:
+         -> add, edit, remove
+        '''
         dict_ = student.content
         list = self.markbook.get_student_marks(student.classroom.content, student.content)
         self.student_all_assignments_options = []
@@ -510,6 +528,7 @@ class Client(object):
                 print("Invalid input, please try again")
 
     def event_edit_student_assignment(self, assignment: object, string=''):
+        #sub menu of view all student assignments 
         dict_ = assignment.content[MARKS][assignment.index]
         self.header_2(f'Edit Assignment {dict_[ASSIGNMENT_NAME]}')
 
@@ -547,6 +566,7 @@ class Client(object):
         enter_attributes() 
 
     def event_remove_student_assignment(self, assignment: object, string=''):
+        #sub menu of view student all ass
         index_ = assignment.index[1]
         dict_ = assignment.content[MARKS][int(index_)] 
 
@@ -558,6 +578,7 @@ class Client(object):
             return self.event_view_student_assignments(assignment, f'Removement Cancelled')
 
     def event_add_student_assignment(self, assignment: object, string=''):
+        #sub menu of view sutdent all ass
         self.header_2('Add Assignment')
 
         def create_assignment(list):
@@ -595,6 +616,9 @@ class Client(object):
 
     #Events of assignment    
     def view_all_assignments(self, classroom: object, string=''):
+        '''key menu:
+        ->last menu, print report, add ,remove, edit, exit
+        '''
         dict_ = classroom.content
         list = self.markbook.get_all_assignments(dict_)
         list = self.markbook.buble_sort(list)
@@ -642,6 +666,7 @@ class Client(object):
                 print("invalid input, please try again")
         
     def event_print_assignment_report(self, assignment: object):
+        #sub menu of view all ass
         cla_dict = assignment.classroom.content
         ass_dict = assignment.content
         line_0 = '{:-^50}'.format(f'Assignment {ass_dict[ASSIGNMENT_NAME]}')
@@ -681,6 +706,7 @@ class Client(object):
             return self.view_all_assignments(assignment.classroom, string=f'print cancelled') 
 
     def event_edit_assignment(self, assignment:object, string=''):
+        #sub menu of view all ass
         cla_dict = assignment.classroom.content
         ass_dict = assignment.content
         self.header_2(f'Edit Assignment {ass_dict[ASSIGNMENT_NAME]}')
@@ -719,6 +745,7 @@ class Client(object):
         enter_attributes() 
 
     def event_remove_assignment(self, assignment, stirng=''):
+        #sub menu of view all ass
         cla_dict = assignment.classroom.content
         ass_dict = assignment.content
         self.header_2(f'Remove {ass_dict[ASSIGNMENT_NAME]}')
@@ -729,6 +756,7 @@ class Client(object):
             return self.view_all_assignments(assignment.classroom, f'Removement Cancelled')    
 
     def event_add_a_assignment(self, assignment: object):
+        #sub menu of view all ass
         cla_dict = assignment.classroom.content
         self.header_2('Add Assignment')
 
