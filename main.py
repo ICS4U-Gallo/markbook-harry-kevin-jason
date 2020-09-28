@@ -355,13 +355,13 @@ class Client(object):
         for value in list:
             if value[0] != MARKS:
                 print(f'{value[0]}: {value[1]}')
-        print('student has following assignment:', end='')
+        print('Student has following assignment:', end='')
         for ass in dict_[MARKS]:
             print(f'{ass[ASSIGNMENT_NAME]}: {ass[MARKS]}, ', end='')
         print()
         self.header_2('Options')
         for option in self.student_options:
-            print(f'type {option.index} to {option.name}')
+            print(f'Input {option.index} to {option.name}')
 
         #user
         while True:
@@ -370,7 +370,7 @@ class Client(object):
                 if str(opt) == str(option):    
                     return opt.trigger()
             else:
-                print("invalid input, please try again")
+                print("Invalid input, please try again")
 
     def event_print_student_report(self, student: object, string=''):
         dict_ = student.content
@@ -507,7 +507,7 @@ class Client(object):
                 if str(opt) == str(option):
                     return opt.trigger()
             else:
-                print("invalid input, please try again")
+                print("Invalid input, please try again")
 
     def event_edit_student_assignment(self, assignment: object, string=''):
         dict_ = assignment.content[MARKS][assignment.index]
@@ -568,8 +568,8 @@ class Client(object):
                 enter_attributes()
 
         def enter_attributes():
-            print("{:-^60}".format("type 'enter' to skip this attributes"))
-            print("{:-^60}".format("type 'c' to cancel this addition"))
+            print("{:-^60}".format("Input 'enter' to skip this attributes"))
+            print("{:-^60}".format("Input 'c' to cancel this addition"))
             list = ['', -1]
 
             for index, (key, value) in enumerate(ASSIGNMENTS_ATTRIBUTES.items()):
@@ -693,8 +693,8 @@ class Client(object):
                 enter_attributes()
 
         def enter_attributes():
-            print("{:-^60}".format("type 'enter' to skip this attributes"))
-            print("{:-^60}".format("type 'c' to cancel this addition"))
+            print("{:-^60}".format("Input 'enter' to skip this attributes"))
+            print("{:-^60}".format("Input 'c' to cancel this addition"))
             list = [ass_dict[ASSIGNMENT_NAME], ass_dict[DUE], ass_dict[POINTS]]
 
             for index, (key, value) in enumerate(ASSIGNMENTS_ATTRIBUTES_.items()):
