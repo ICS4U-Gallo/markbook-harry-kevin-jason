@@ -1,0 +1,12 @@
+---------------Assignment Markbook----------------
+Class: G12 Computer Science
+Name: Markbook            
+Full Points: 100                 
+Teacher: Mr.Gallo
+----------------------Marks-----------------------
+Chengzong           100       
+Yingchen            85        
+Duoyang             100       
+Name                Marks     
+average             95        
+==================================================

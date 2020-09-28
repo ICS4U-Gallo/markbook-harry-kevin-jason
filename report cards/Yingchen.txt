@@ -1,0 +1,12 @@
+---------------------Profile----------------------
+Class: G12 Computer Science
+Name: Yingchen Ma         
+Student Number: 1140524             
+Teacher: Mr.Gallo
+----------------------Marks-----------------------
+0.Markbook          85        92.5           92.5      
+1.Markbook          85        91             91.0      
+2.Test 1            88        92.5           92.5      
+3.Test 1            88        91             91.0      
+Average Mark        91        91.75          91.75     
+==================================================
