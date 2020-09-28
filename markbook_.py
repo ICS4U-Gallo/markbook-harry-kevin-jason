@@ -106,8 +106,8 @@ class Markbook(object):
         for student in classroom[STUDENT_LIST]:
             ave = self.get_student.get_student_average(classroom, student)
             list.append(ave)
-        class_ave = statistics.mean(list)
-        class_med = statistics.median(list)
+        class_ave = round(statistics.mean(list),1)
+        class_med = round(statistics.median(list),1)
         return [class_ave, class_med]
 
 
@@ -155,7 +155,7 @@ class Markbook(object):
     
     
     #Methods to get informations of all assignment
-    def get_all_assignment(self, classroom: dict) -> list:
+    def get_all_assignments(self, classroom: dict) -> list:
         '''get all assignmnet in assignment list
         Returns -> list:
             A list of all assignment dict objs
@@ -181,8 +181,9 @@ class Markbook(object):
             for assignment_ in student[MARKS]:
                 
                 if assignment_[ASSIGNMENT_NAME] == assignment[ASSIGNMENT_NAME]:
+
+
                     list.append([student[FIRST_NAME], assignment_[MARKS]])
-            
         return list
         
     def get_assignment_average_median(self, classroom: dict, assignment: dict) -> list:
@@ -197,7 +198,7 @@ class Markbook(object):
         for student in list:
             temp_mark_list.append(student[1])
             
-        return [statistics.mean(temp_mark_list), statistics.median(temp_mark_list)]
+        return [round(statistics.mean(temp_mark_list),1), round(statistics.median(temp_mark_list),1)]
   
     def get_all_assignment_average_median(self, classroom: dict) -> list:
         '''get final mark average and median of class
@@ -210,7 +211,7 @@ class Markbook(object):
             list_ = self.get_assignment_average_median(classroom, ass)
             templist[0].append(list_[0])
             templist[1].append(list_[1])        
-        return [statistics.mean(templist[0]), statistics.median(templist[1])]
+        return [round(statistics.mean(templist[0]), 1), round(statistics.median(templist[1]), 1)]
 
 
     #Methods to edit an assignment
@@ -284,12 +285,15 @@ class Markbook(object):
         for assignment in student[MARKS]:
             for assignment_ in classroom[ASSIGNMENTS_LIST]:
                 if assignment[ASSIGNMENT_NAME] == assignment[ASSIGNMENT_NAME]:
-                    stat = self.get_assignment_average_median(classroom, assignment_)
-                    temp_list = list(assignment.values())
-                    temp_list.append(stat[0])
-                    temp_list.append(stat[1])
-                
-                    list_.append(temp_list)
+
+                  stat = self.get_assignment_average_median(classroom, assignment_)
+                  temp_list = list(assignment.values())
+                  temp_list.append(stat[0])
+                  temp_list.append(stat[1])
+                  list_.append(temp_list)
+                  temp_list = []
+                  break
+
         return list_
         
     def get_student_average(self, classroom: dict, student: dict) -> float:
