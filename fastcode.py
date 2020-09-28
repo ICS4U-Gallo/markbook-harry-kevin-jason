@@ -6,6 +6,7 @@ STUDENT_LIST = 'student_list'
 ASSIGNMENTS_LIST = 'assignments_list'
 NAME = 'name'
 DUE = 'due'
+B = 'shadiao'
 POINTS = 'points'
 FIRST_NAME = 'first_name'
 LAST_NAME = 'last_name'
@@ -41,6 +42,7 @@ ASSIGNMENTS_ATTRIBUTES = {
     ASSIGNMENT_NAME: '',
     MARKS: ''
 }
+A = 'Gallo'
 
 ASSIGNMENTS_ATTRIBUTES_ = {
     ASSIGNMENT_NAME: '',
